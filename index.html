@@ -26,6 +26,7 @@
       <a href="#calibration">Calibration</a>
       <a href="#performance">GPU</a>
       <a href="#gallery">Gallery</a>
+      <a href="#paper">Paper</a>
       <a href="#editions">Download</a>
       <a class="btn btn-sm" href="#contact">Contact</a>
     </nav>
@@ -42,7 +43,7 @@
     <p class="lead">Grains and water, coupled on one GPU. GranumFL adds an SPH water phase to the Granum discrete element program, lays out debris flows on real terrain from a GeoTIFF, and lets an AI agent set up and read a site study through 20 MCP tools.</p>
     <div class="cta">
       <a class="btn btn-primary" href="#editions">Download Education edition</a>
-      <a class="btn btn-ghost" href="#calibration">See the calibration</a>
+      <a class="btn btn-ghost" href="#paper">Read the paper</a>
     </div>
   </div>
   <div class="sim-hud" aria-live="off">
@@ -271,10 +272,29 @@
 </section>
 
 <section id="paper" class="sec alt">
-  <div class="wrap">
-    <p class="eyebrow">Paper</p>
-    <h2>GranumFL: an agentic, GPU-accelerated coupled DEM–SPH program for debris flows on real terrain</h2>
-    <p class="sub">Verification, calibration, GPU performance and agent trials. Manuscript in preparation; the benchmark scripts, their outputs and the agent trial logs are available from the authors on request.</p>
+  <div class="wrap paper">
+    <div>
+      <p class="eyebrow">Paper</p>
+      <h2>GranumFL: an agentic, GPU-accelerated coupled DEM–SPH program for debris flows on real terrain</h2>
+      <p class="sub">Sompote Youwai, King Mongkut's University of Technology Thonburi, 2026. The paper describes the unresolved DEM–SPH coupling on one CUDA GPU, the calibration of each phase against published benchmarks (Chung and Ooi impacts within 0.09 % of Hertz, DEM8 penetration within the spread of eight open-source codes, a sedimenting porous block closer to theory than the reference implementation), the cases where the coupling is not yet accurate, the GPU performance, and the agent trials that set up a site study through 20 MCP tools.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="https://zenodo.org/records/23858571" target="_blank" rel="noopener">Read on Zenodo (PDF)</a>
+        <a class="btn btn-ghost" href="https://doi.org/10.5281/zenodo.23858571" target="_blank" rel="noopener">doi:10.5281/zenodo.23858571</a>
+      </div>
+    </div>
+    <div class="cite">
+      <div class="cite-head"><b>Cite GranumFL</b><button class="copy" id="copyCite">Copy BibTeX</button></div>
+<pre id="bibtex">@misc{youwai2026granumfl,
+  author    = {Youwai, Sompote},
+  title     = {GranumFL: an agentic, GPU-accelerated
+               coupled DEM--SPH program for debris
+               flows on real terrain},
+  year      = {2026},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23858571},
+  url       = {https://zenodo.org/records/23858571}
+}</pre>
+    </div>
   </div>
 </section>
 
@@ -297,7 +317,7 @@
 </section>
 
 <footer class="foot">
-  <div class="wrap">© 2026 AI Research Group, KMUTT · GranumFL · The hero is a 2D illustration; all numbers on this page come from the calibration and performance runs described in the paper.</div>
+  <div class="wrap">© 2026 AI Research Group, KMUTT · GranumFL · The hero is a 2D illustration; all numbers on this page come from the calibration and performance runs described in the paper: Youwai, S. (2026). GranumFL: an agentic, GPU-accelerated coupled DEM–SPH program for debris flows on real terrain. Zenodo. <a href="https://doi.org/10.5281/zenodo.23858571" target="_blank" rel="noopener">doi:10.5281/zenodo.23858571</a> · <a href="https://github.com/granumFL" target="_blank" rel="noopener">github.com/granumFL</a></div>
 </footer>
 
 <dialog id="dlg">

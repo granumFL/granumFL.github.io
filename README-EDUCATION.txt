@@ -43,5 +43,7 @@ EDUCATION LIMITS
   For teaching and non-commercial academic research only: see LICENSE-EDUCATION.txt.
   Academic Research and Professional licences: tellusfem@gmail.com
 
-WEBSITE
+WEBSITE AND PAPER
   https://granumfl.github.io/
+  Youwai, S. (2026). GranumFL: an agentic, GPU-accelerated coupled DEM-SPH program for debris
+  flows on real terrain. Zenodo. https://doi.org/10.5281/zenodo.23858571

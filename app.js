@@ -223,6 +223,14 @@
   document.getElementById("dlgAsk").addEventListener("click", function () { setTopic("Education edition"); dlg.close(); });
   document.querySelectorAll("[data-topic]").forEach(function (a) { a.addEventListener("click", function () { setTopic(a.dataset.topic); }); });
 
+  // ---------- copy the BibTeX
+  var cc = document.getElementById("copyCite");
+  cc.addEventListener("click", function () {
+    navigator.clipboard.writeText(document.getElementById("bibtex").textContent).then(function () {
+      cc.textContent = "Copied"; setTimeout(function () { cc.textContent = "Copy BibTeX"; }, 1500);
+    });
+  });
+
   // ---------- contact form: an email to the group
   document.getElementById("form").addEventListener("submit", function (e) {
     e.preventDefault();
