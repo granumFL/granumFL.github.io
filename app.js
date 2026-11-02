@@ -162,8 +162,8 @@
   var chips = document.getElementById("chips");
   tools.forEach(function (t) { var s = document.createElement("span"); s.textContent = t; chips.appendChild(s); });
   var snippets = {
-    cc: "claude mcp add granum -- granum --mcp\n\n# then ask, for example:\n# \"Set up a debris-flow model of the Nanai landslide in Patong:\n#  source 80 x 50 x 3 m at 7.8834 N, 98.3061 E, saturated;\n#  mark Nanai Road and the DMR point; erodible bed 1 m;\n#  check it and tell me what to fix before the GPU run.\"",
-    json: "{\n  \"mcpServers\": {\n    \"granum\": {\n      \"command\": \"granum\",\n      \"args\": [\"--mcp\"]\n    }\n  }\n}"
+    cc: "claude mcp add granumfl -- /Applications/GranumFL.app/Contents/MacOS/granum --mcp\n\n# Claude Opus is recommended: /model opus\n# then ask, for example:\n# \"Set up a debris-flow model of the Nanai landslide in Patong:\n#  source 80 x 50 x 3 m at 7.8834 N, 98.3061 E, saturated;\n#  mark Nanai Road and the DMR point; erodible bed 1 m;\n#  check it and tell me what to fix before the GPU run.\"",
+    json: "{\n  \"mcpServers\": {\n    \"granumfl\": {\n      \"command\": \"/Applications/GranumFL.app/Contents/MacOS/granum\",\n      \"args\": [\"--mcp\"]\n    }\n  }\n}"
   };
   var snip = document.getElementById("snippet"), cur = "cc";
   function showTab(t) {

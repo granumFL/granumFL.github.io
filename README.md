@@ -1,6 +1,6 @@
 # GranumFL website
 
-Static site (no build step): `index.html`, `style.css`, `app.js`, `sim.js`, `img/`.
+Static site (no build step): `index.html`, `style.css`, `app.js`, `sim.js`, `img/`, and the user manual `manual.html` + `manual.css` (install, water cases, real terrain, MCP set-up with Claude Opus recommended from the paper's agent trials, tools, editions).
 
 - Preview: `python3 -m http.server 8812` in this folder, then open http://localhost:8812.
 - Hero: `sim.js` is a real-time 2D toy (double-density-relaxation water, contact grains, drag and

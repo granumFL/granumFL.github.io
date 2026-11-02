@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GranumFL User Manual</title>
+<meta name="description" content="How to install GranumFL, run a water and grains case, lay out a debris flow on real terrain, and connect Claude Opus or another AI agent through the built-in MCP server.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="manual.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='11' cy='20' r='7' fill='%23d9822b'/%3E%3Ccircle cx='22' cy='12' r='6' fill='%231b7f93'/%3E%3C/svg%3E">
+<script>try { var t = localStorage.getItem("gfl-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body class="manual-page">
+
+<header class="nav solid" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="index.html" aria-label="GranumFL home">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle class="m2" cx="11" cy="20" r="7"/><circle class="m1" cx="22" cy="12" r="6"/><path class="m4" d="M2 27 Q 9 23 16 27 T 30 27" fill="none" stroke-width="2.2"/></svg>
+      Granum<span class="fl">FL</span>
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="index.html#features">Features</a>
+      <a href="index.html#agents">Agents</a>
+      <a href="manual.html" aria-current="page">Manual</a>
+      <a href="index.html#editions">Download</a>
+      <a href="index.html#paper">Paper</a>
+      <a class="btn btn-sm" href="index.html#contact">Contact</a>
+    </nav>
+    <button class="theme" id="theme" aria-label="Switch light or dark theme">◐</button>
+  </div>
+</header>
+
+<div class="wrap man">
+  <aside class="toc" aria-label="Contents">
+    <p class="toc-h">User manual</p>
+    <a href="#install">1. Install</a>
+    <a href="#tour">2. The app</a>
+    <a href="#first">3. A first water case</a>
+    <a href="#site">4. A debris flow on real terrain</a>
+    <a href="#results">5. Reading the results</a>
+    <a href="#claude">6. Why Claude Opus</a>
+    <a href="#mcp">7. Connect through MCP</a>
+    <a href="#chat">8. The in-app chat</a>
+    <a href="#tools">9. MCP tools</a>
+    <a href="#prompts">10. Working with an agent</a>
+    <a href="#limits">11. Editions and limits</a>
+    <a href="#trouble">12. Troubleshooting</a>
+  </aside>
+
+  <main class="doc">
+    <p class="eyebrow">GranumFL 0.1.0 · User manual</p>
+    <h1>Using GranumFL</h1>
+    <p class="lead-doc">GranumFL couples discrete element grains with SPH water, so that saturated soil, debris flows and floods are modelled together. You can drive it by hand in the desktop app, through the chat assistant inside the app, or from an AI agent that speaks the Model Context Protocol (MCP). The MCP server is built into the program, and we recommend Claude Opus as the agent, because it is the model with which the agent trials of the paper passed every check.</p>
+
+    <!-- 1 -->
+    <section id="install">
+      <h2>1. Install</h2>
+      <p>Download the Education edition from the <a href="index.html#editions">download section</a>. Each zip holds the program, the <code>tigrim</code> chat agent, the licence and a quick start.</p>
+      <div class="os-grid">
+        <div class="os"><h3>macOS 11 or later</h3><p>Move <b>GranumFL.app</b> to Applications. It runs on Intel and Apple silicon. The app is not notarised yet, so the first time right-click it and choose <b>Open</b>, or run:</p>
+<pre><code>xattr -dr com.apple.quarantine /Applications/GranumFL.app</code></pre></div>
+        <div class="os"><h3>Windows 10 and 11</h3><p>Unzip <b>GranumFL-Education</b> anywhere and run <b>granum.exe</b>. If SmartScreen warns, choose <b>More info</b> and <b>Run anyway</b>. Keep <code>tigrim.exe</code> in the same folder.</p></div>
+      </div>
+      <h3>The engines</h3>
+      <p>The coupled solver runs on CUDA when an NVIDIA GPU is present, which needs the NVIDIA driver and NVRTC from the CUDA toolkit (or <code>TELLUSDEM_NVRTC</code> set to the NVRTC library). Otherwise it runs on the CPU, which gives the same answers more slowly, so on a Mac keep water cases small and runs short while you learn. The dry DEM laboratory tests can also use wgpu (Metal on a Mac, DirectX 12 on Windows).</p>
+    </section>
+
+    <!-- 2 -->
+    <section id="tour">
+      <h2>2. The app</h2>
+      <p>The bar at the top holds <b>File</b>, <b>Undo</b> and <b>Redo</b>, the <b>Input</b> and <b>Output</b> workspaces, <b>Run</b> and the <b>Chat assistant</b>. The left panel has three modes, and each mode leads you through numbered steps.</p>
+      <table class="paths">
+        <tr><th>Mode</th><th>What it models</th><th>Steps</th></tr>
+        <tr><td><b>Lab test</b></td><td>Granum's laboratory tests on dry or bonded grains: triaxial, oedometer, unconfined compression, stress path, Brazilian, deposition, angle of repose and a model footing</td><td>Particles, Specimen, Test, Solver</td></tr>
+        <tr><td><b>Model</b></td><td>Staged soil models with regions, rigid structures and construction phases</td><td>Materials, Geometry, Staged construction, Solver</td></tr>
+        <tr><td><b>Water + grains</b></td><td>Coupled DEM–SPH cases: templates in a box, or a debris flow on real terrain</td><td>Case, Water, Grains &amp; gate, Run; on terrain: Case, Terrain, Source &amp; path, Water, Grains, Run</td></tr>
+      </table>
+      <p>The 3D view shows the model as you build it, and <b>Output</b> plays the run back with the grains coloured by speed and the water in blue. A water case on terrain also has a <b>Plan map</b> with the result maps, the places and the path.</p>
+    </section>
+
+    <!-- 3 -->
+    <section id="first">
+      <h2>3. A first water case</h2>
+      <ol class="steps">
+        <li>Choose <b>Water + grains</b> and, under <b>Case</b>, pick a template. Each template reproduces a published benchmark or a classroom problem, and all of them fit the Education limits.
+          <table class="paths">
+            <tr><th>Template</th><th>What it shows</th></tr>
+            <tr><td><code>dam_break</code></td><td>A water column collapsing on a dry floor, compared with Martin and Moyce (1952)</td></tr>
+            <tr><td><code>hydrostatic</code></td><td>Water at rest, with the pressure compared with ρgh</td></tr>
+            <tr><td><code>settling</code></td><td>One grain settling in still water, compared with the Di Felice terminal velocity</td></tr>
+            <tr><td><code>quick_condition</code></td><td>Upward seepage through a sand bed to the quick condition</td></tr>
+            <tr><td><code>debris_flow</code></td><td>A saturated debris flow released by a gate down a 25° flume</td></tr>
+            <tr><td><code>terrain</code></td><td>A debris flow on a real site from an elevation model (Section 4)</td></tr>
+          </table></li>
+        <li>Go through <b>Water</b> and <b>Grains &amp; gate</b>. The panel shows the estimated numbers of grains and water particles and warns about settings that will give poor results, such as a water layer thinner than two particle spacings.</li>
+        <li>Under <b>Run</b>, set the duration and press <b>Run</b>. The run goes on in the background, so you can keep working.</li>
+        <li>Open <b>Output</b> to play the frames back and plot the grain and water fronts, the kinetic energies, the largest water speed or, for the quick condition, the pressure drop across the bed against time.</li>
+      </ol>
+      <div class="example"><b>For a class.</b> The dam break and the settling grain each compare the program with a closed-form or laboratory result, so students can see how close a particle model gets and why the particle spacing matters.</div>
+    </section>
+
+    <!-- 4 -->
+    <section id="site">
+      <h2>4. A debris flow on real terrain</h2>
+      <p>Start a case from the <code>terrain</code> template and follow the steps on the left. The plan map has tools for each step: <b>Pan</b>, <b>Crop</b>, <b>Source</b>, <b>Catchment</b>, <b>Path</b>, <b>Place</b> and <b>Measure</b>.</p>
+      <ol class="steps">
+        <li><b>Terrain.</b> Open a GeoTIFF or an ESRI ASCII grid, or type a latitude and longitude and press <b>Download GLO-30</b> to fetch the free Copernicus tile (about 30 m cells). Crop the area with the <b>Crop</b> tool or by a point and a size, choose the cell size and cut the terrain. WGS 84 and UTM coordinates are read from the file.</li>
+        <li><b>Source &amp; path.</b> Drag a rectangle with <b>Source</b> for the soil that fails, and set its thickness and whether it is saturated. Drag <b>Catchment</b> for storm water lying on the ground at the start. Click with <b>Path</b> where the flow starts to trace the steepest-descent path, then lay an erodible bed along it. Click with <b>Place</b> to name the roads, houses or reported impact points where you want records.</li>
+        <li><b>Water.</b> Choose a surface preset (Manning's n), the water particle spacing (at least 1.25 grain diameters, 3 advised) and the expected speed.</li>
+        <li><b>Grains.</b> Choose a soil preset or set the grain size, friction, rolling resistance and the apparent cohesion that holds the source until it is wetted. These are coarse-grained model parameters to calibrate against an observed runout, not laboratory values.</li>
+        <li><b>Run.</b> Read the estimate and the warnings, then run. In the Education edition the case runs on your computer; larger sites need an Academic Research or Professional licence, which can export the case for a GPU server.</li>
+      </ol>
+      <div class="tip"><b>About GLO-30.</b> Copernicus GLO-30 is a surface model, so trees and buildings are in its heights and can turn a traced path. In the paper's trials the path from the Nanai source missed Nanai Road for this reason. Use a bare-earth lidar model where one exists.</div>
+    </section>
+
+    <!-- 5 -->
+    <section id="results">
+      <h2>5. Reading the results</h2>
+      <ul>
+        <li><b>3D playback</b> of the grains and the water, frame by frame.</li>
+        <li><b>Plan maps</b> over the shaded terrain: debris thickness, thickness change, peak grain speed, peak water depth (measured by volume, so spray does not set it) and peak water speed.</li>
+        <li><b>Records at places</b>: debris thickness, arrival time, peak speeds, water depth and the impact pressure ρv², as a table, a chart and a CSV file.</li>
+        <li><b>Runout</b> along the path, with the travel angle H/L of the grains that moved more than 5 m.</li>
+      </ul>
+      <p>Treat every result as a scenario, not a forecast. Check the runout against an observed event before you vary the parameters, and read the warnings that come with the run.</p>
+    </section>
+
+    <!-- 6 -->
+    <section id="claude">
+      <h2>6. Why we recommend Claude Opus</h2>
+      <p>GranumFL works with any agent that speaks MCP, but we recommend <b>Claude Opus</b> (currently Claude Opus 5.5) for site studies, because it is the model we tested. In the four agent trials of the paper, Claude Opus 5.5 was given only the engineer's request and the MCP tools. It set up, ran or edited the Patong debris-flow site in 5 to 20 tool calls, and it passed all 33 checks, which were scored from the model files it left rather than from its replies.</p>
+      <p>Beyond the checks, the agent also found problems that nobody asked it to look for. Two trials noticed that the traced path missed Nanai Road and traced it to the surface model. Another found that the grains' grid stopped short of the downstream places and that the water layers were thinner than two particle spacings. A further trial declined to read a 6 s coarse run as a final travel angle. Four trials with one model cannot give a success rate, so this shows that the tools are clear enough for a strong agent, not that every agent will succeed.</p>
+      <div class="tip"><b>Which model for which job.</b> Use Claude Opus to plan and check a site study, where it must combine terrain, source, path, water and warnings over many steps. A faster, cheaper model is usually enough for single laboratory tests or small edits.</div>
+      <p>There are two ways to work with Claude:</p>
+      <ul>
+        <li><b>Claude Code or Claude Desktop</b> starts GranumFL as an MCP server (Section 7). This is the way the trials were run.</li>
+        <li><b>The chat inside the app</b> can use Claude Opus through OpenRouter (Section 8), so you can watch the model change in the 3D view.</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section id="mcp">
+      <h2>7. Connect through MCP</h2>
+      <p>Run the program with <code>--mcp</code> and it becomes an MCP server on standard input and output, with 53 tools. Register it with your agent using the full path to the program:</p>
+      <table class="paths">
+        <tr><th>System</th><th>Path to the program</th></tr>
+        <tr><td>macOS</td><td><code>/Applications/GranumFL.app/Contents/MacOS/granum</code></td></tr>
+        <tr><td>Windows</td><td><code>C:\path\to\GranumFL-Education\granum.exe</code></td></tr>
+      </table>
+
+      <h3>Claude Code (recommended)</h3>
+<div class="code"><pre><code>claude mcp add granumfl -- /Applications/GranumFL.app/Contents/MacOS/granum --mcp
+<span class="c"># for all your projects:</span>
+claude mcp add -s user granumfl -- /Applications/GranumFL.app/Contents/MacOS/granum --mcp
+<span class="c"># choose Claude Opus inside Claude Code:</span>
+/model opus</code></pre></div>
+      <p>Start <code>claude</code> and type <code>/mcp</code>: <b>granumfl</b> should be listed as connected. Then ask in plain language (Section 10).</p>
+
+      <h3>Claude Desktop</h3>
+      <p>Edit <code>claude_desktop_config.json</code> (Settings → Developer → Edit Config). It lives in <code>~/Library/Application Support/Claude/</code> on macOS and <code>%APPDATA%\Claude\</code> on Windows. Restart Claude Desktop, then choose Claude Opus in the model menu.</p>
+<div class="code"><pre><code>{
+  "mcpServers": {
+    "granumfl": {
+      "command": "/Applications/GranumFL.app/Contents/MacOS/granum",
+      "args": ["--mcp", "--autosave", "/Users/me/granumfl/site.tellusdem"]
+    }
+  }
+}</code></pre></div>
+
+      <h3>Cursor and other MCP clients</h3>
+      <p>Add the same entry to <code>~/.cursor/mcp.json</code> or to the project's <code>.cursor/mcp.json</code>. Any client that starts a stdio MCP server takes the same command and arguments.</p>
+
+      <h3>Options</h3>
+      <table class="paths">
+        <tr><th>Option</th><th>Effect</th></tr>
+        <tr><td><code>--open file.tellusdem</code></td><td>Start with that project loaded.</td></tr>
+        <tr><td><code>--autosave file.tellusdem</code></td><td>Save the project there after every tool that changes it, so you can open the agent's model in the app at any time. The terrain and results are written beside it.</td></tr>
+      </table>
+      <div class="tip"><b>Agent and app together.</b> With <code>--autosave</code>, the agent's model is a normal project file. Open it in the app to look at the plan map, the source and the path the agent laid out, correct anything by hand, and let the agent continue from your version.</div>
+    </section>
+
+    <!-- 8 -->
+    <section id="chat">
+      <h2>8. The chat assistant in the app</h2>
+      <p>The chat assistant is an agent inside the app. You write what you want, and it builds the case, runs it and shows the maps and curves under its reply. It works on a copy of your model, and what it leaves is applied to yours as one step that <b>Undo</b> reverses.</p>
+      <ol class="steps">
+        <li>Press <b>Chat assistant</b> (top right), then <b>Settings</b>.</li>
+        <li><b>tigrim</b> should read <i>found</i>, because it ships next to the program. If not, press <b>Browse</b> and choose <code>tigrim</code> (<code>tigrim.exe</code> on Windows).</li>
+        <li>Enter the provider. The agent works with any OpenAI-compatible API. To use Claude Opus, use OpenRouter, which gives one key for many models:
+          <div class="code"><pre><code><span class="c">API URL</span>   https://openrouter.ai/api/v1
+<span class="c">Model</span>     anthropic/claude-opus-5.5
+<span class="c">API key</span>   sk-or-v1-...   <span class="c">(from openrouter.ai → Keys)</span></code></pre></div>
+          Claude Opus also reads images, so you can attach a photo of a scar or a sketch of the site. A cheaper model such as <code>deepseek/deepseek-v4.1-flash</code> is enough for laboratory tests.</li>
+        <li>Press <b>Done</b>. The key is kept in your settings folder, not in project files.</li>
+      </ol>
+    </section>
+
+    <!-- 9 -->
+    <section id="tools">
+      <h2>9. MCP tools</h2>
+      <p>The agent sees each tool with its description and arguments, together with the server's instructions, so it needs no other prompt. Lengths are in metres for the site tools and in millimetres for the laboratory and model tools.</p>
+      <table class="tools-table">
+        <tr><th>Group</th><th>Tools</th><th>What they do</th></tr>
+        <tr><td>Water case</td><td><code>new_water_case</code> <code>get_water_case</code> <code>run_water</code> <code>load_water_results</code> <code>water_results</code> <code>export_water_case</code></td><td>Start from a template, read and edit the case, run it here, load results from a GPU server, and read the runout and the records at places. Export is in the Professional edition.</td></tr>
+        <tr><td>Site</td><td><code>site_open_dem</code> <code>site_download_dem</code> <code>site_cut_terrain</code> <code>site_add_place</code> <code>site_remove_place</code> <code>site_set_source</code> <code>site_set_catchment</code> <code>site_trace_path</code> <code>site_set_bed</code> <code>site_set_soil</code> <code>site_set_water</code> <code>site_info</code> <code>site_measure</code> <code>site_map</code></td><td>Elevation model, crop and cut, places, source, catchment, path, bed, soil and water, checks and estimates, distances and slopes, and result maps as PNG (or GIS grids in the Professional edition).</td></tr>
+        <tr><td>Project</td><td><code>new_project</code> <code>open_project</code> <code>save_project</code> <code>set_title</code> <code>get_model</code> <code>set_model</code> <code>validate</code></td><td>Start from a template or a file, read or replace the whole model, and check it before a run.</td></tr>
+        <tr><td>Grains and tests</td><td><code>add_material</code> <code>update_material</code> <code>delete_material</code> <code>set_grading</code> <code>set_specimen</code> <code>set_test</code> <code>set_bonds</code> <code>set_curing</code> <code>set_solver</code></td><td>Grains, shapes, clay aggregates, gradings, the specimen, the test, bonds, cement curing and solver settings.</td></tr>
+        <tr><td>Staged models</td><td><code>add_region</code> <code>update_region</code> <code>delete_region</code> <code>add_structure</code> <code>update_structure</code> <code>delete_structure</code> <code>add_phase</code> <code>update_phase</code> <code>delete_phase</code></td><td>Soil regions, rigid structures and construction phases.</td></tr>
+        <tr><td>Run and results</td><td><code>calculate</code> <code>get_results</code> <code>get_curve</code> <code>show_picture</code> <code>write_animation</code> <code>write_report</code> <code>get_compute</code> <code>set_compute</code></td><td>Run a DEM model, read curves, render pictures and animations, and write a PDF report.</td></tr>
+      </table>
+    </section>
+
+    <!-- 10 -->
+    <section id="prompts">
+      <h2>10. Working with an agent</h2>
+      <p>Describe the job as you would to a colleague: the site, the soil, the water and what you want to know. The agent fills in sensible defaults for what you leave out and tells you which ones it chose. These requests work well:</p>
+      <ul class="prompts">
+        <li>"Set up a debris-flow model of the Nanai landslide in Patong: a saturated source of 80 × 50 × 3 m at 7.8834 N, 98.3061 E, Nanai Road and the DMR impact point as places, and an erodible bed of 1 m. Check it and tell me what to fix before a GPU run."</li>
+        <li>"Run a coarse trial of this case and give me the runout and the travel angle, and tell me whether the run is long enough to trust them."</li>
+        <li>"Make the bed 2 m deep and the source 100 × 60 m, add the school as a place, and check that the grid reaches every place."</li>
+        <li>"Run the dam break template and compare the front with Martin and Moyce."</li>
+        <li>"Draw the peak water depth map with the places and list the depth and arrival time at each place."</li>
+      </ul>
+      <div class="tip"><b>Check the agent.</b> The agent uses the same tools and checks as you, but it can misjudge. Read the estimates and warnings it reports, open its model in the app, and treat its results as you would a junior engineer's work, checking them before they inform any decision about people or property.</div>
+    </section>
+
+    <!-- 11 -->
+    <section id="limits">
+      <h2>11. Editions and limits</h2>
+      <table class="paths">
+        <tr><th></th><th>Education (free)</th><th>Academic Research</th><th>Professional</th></tr>
+        <tr><td>Use</td><td>Teaching, non-commercial research</td><td>Non-commercial research</td><td>Commercial and consulting work</td></tr>
+        <tr><td>Water + grains case</td><td>50,000 grains and 50,000 water particles</td><td>No limit</td><td>No limit</td></tr>
+        <tr><td>DEM model</td><td>50,000 particles</td><td>No limit</td><td>No limit</td></tr>
+        <tr><td>Terrain</td><td>1 km² in plan</td><td>No limit</td><td>No limit</td></tr>
+        <tr><td>GPU-server export and GIS grids</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>Reports, maps and pictures</td><td>Education watermark</td><td>Education watermark</td><td>Clean</td></tr>
+        <tr><td>How to get it</td><td><a href="index.html#editions">Download</a></td><td colspan="2"><a href="index.html#contact">Contact us</a></td></tr>
+      </table>
+      <p>If you publish work done with GranumFL, please cite <a href="https://doi.org/10.5281/zenodo.23858571" target="_blank" rel="noopener">Youwai (2026), doi:10.5281/zenodo.23858571</a>.</p>
+    </section>
+
+    <!-- 12 -->
+    <section id="trouble">
+      <h2>12. Troubleshooting</h2>
+      <dl class="faq">
+        <dt>"The Education edition is limited to 50,000 grains per case."</dt>
+        <dd>Make the source or the bed smaller, or the grains larger. For research sites, ask for an Academic Research licence.</dd>
+        <dt>"The Education edition is limited to 1 km²."</dt>
+        <dd>Cut a smaller crop around the source and the places, for example 1.25 × 0.8 km.</dd>
+        <dt>A run stops early with a grain outside the grid.</dt>
+        <dd>The grains' grid surrounds the source and the bed by the grid margin. Raise <b>Grid margin for the grains</b> under <b>Water</b> so that it reaches every place downstream.</dd>
+        <dt>The water runs much too fast.</dt>
+        <dd>Check that a surface preset or Manning's n is set, and that the water layers are at least two particle spacings thick.</dd>
+        <dt>The run uses the CPU although I have an NVIDIA GPU.</dt>
+        <dd>The CUDA engine needs NVRTC (see <a href="#install">Install</a>). The run's log has a line that starts with <code>engines:</code>, which says whether the water and the grains ran on CUDA or on the CPU.</dd>
+        <dt>Claude Code does not list granumfl under <code>/mcp</code>.</dt>
+        <dd>Use the full path to the program, include <code>--mcp</code>, and run <code>claude mcp list</code> to see the error. On macOS, open GranumFL.app once first so that macOS allows it to run.</dd>
+        <dt>The chat answers with an error from the provider.</dt>
+        <dd>Check the API URL, the model name exactly as OpenRouter lists it (<code>anthropic/claude-opus-5.5</code>), and that the key has credit.</dd>
+      </dl>
+      <p>Other questions: <a href="mailto:tellusfem@gmail.com">tellusfem@gmail.com</a>.</p>
+    </section>
+  </main>
+</div>
+
+<footer class="foot">
+  <div class="wrap">© 2026 AI Research Group, KMUTT · GranumFL · Youwai, S. (2026). GranumFL: an agentic, GPU-accelerated coupled DEM–SPH program for debris flows on real terrain. Zenodo. <a href="https://doi.org/10.5281/zenodo.23858571" target="_blank" rel="noopener">doi:10.5281/zenodo.23858571</a></div>
+</footer>
+<script>
+  document.getElementById("theme").addEventListener("click", function () {
+    var d = document.documentElement, dark = d.dataset.theme === "dark" || (!d.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+    d.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("gfl-theme", d.dataset.theme); } catch (e) {}
+  });
+  var links = [].slice.call(document.querySelectorAll(".toc a"));
+  var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id); }); }); }, { rootMargin: "-30% 0px -60% 0px" });
+  document.querySelectorAll(".doc section").forEach(function (s) { io.observe(s); });
+</script>
+</body>
+</html>
