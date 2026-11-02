@@ -44,4 +44,4 @@ EDUCATION LIMITS
   Academic Research and Professional licences: tellusfem@gmail.com
 
 WEBSITE
-  https://granumdem.github.io/granumfl/
+  https://granumfl.github.io/
