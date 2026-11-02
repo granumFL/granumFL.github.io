@@ -1,0 +1,32 @@
+GRANUMFL EDUCATION EDITION - LICENCE
+Version 1.0, November 2026
+
+Copyright (c) 2026 Sompote Youwai, King Mongkut's University of Technology Thonburi (KMUTT).
+
+1. Grant. You may install and use the GranumFL Education edition free of charge for teaching,
+   for learning and for non-commercial academic research at a school, college or university.
+
+2. Not permitted. You may not use the Education edition, or its reports, maps, pictures,
+   animations or results, for commercial work, consulting, hazard or design studies of real
+   sites for a fee, or any work done for a client. You may not remove or hide the Education
+   watermark, sell or rent the software, or redistribute it outside your own course or
+   research group.
+
+3. Limits. The Education edition limits a discrete element model to 50,000 particles, a water
+   and grains case to 50,000 grains and 50,000 water particles, and a terrain to 1 km² in plan.
+   It calculates on the local computer only, does not export cases for GPU servers or result
+   maps as GIS grids, and marks its reports and pictures as Education output. An Academic
+   Research licence without these limits, and a Professional licence for commercial use, are
+   available on request from tellusfem@gmail.com.
+
+4. Citation. If you publish work that uses GranumFL, please cite the GranumFL paper when it
+   appears, and the Granum program it is built on:
+   Youwai, S. (2026). Granum: an agentic, GPU-accelerated discrete element program for soil.
+   Zenodo. https://doi.org/10.5281/zenodo.23652515
+
+5. No warranty. The software is provided "as is", without warranty of any kind. The authors are
+   not liable for any claim or damage arising from its use. Debris-flow and flood results are
+   model scenarios, not forecasts, and must be checked by a qualified engineer before they
+   inform any decision about people or property.
+
+6. Termination. This licence ends automatically if you break its terms.

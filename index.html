@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GranumFL: grains and water on one GPU</title>
+<meta name="description" content="GranumFL couples DEM grains with SPH water on one CUDA GPU, lays out debris-flow cases on real terrain from a GeoTIFF, and lets an AI agent drive every step through 20 MCP tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='11' cy='20' r='7' fill='%23d9822b'/%3E%3Ccircle cx='22' cy='12' r='6' fill='%231b7f93'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="GranumFL home">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle class="m2" cx="11" cy="20" r="7"/><circle class="m1" cx="22" cy="12" r="6"/><path class="m4" d="M2 27 Q 9 23 16 27 T 30 27" fill="none" stroke-width="2.2"/></svg>
+      Granum<span class="fl">FL</span>
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#features">Features</a>
+      <a href="#site">Real terrain</a>
+      <a href="#agents">Agents</a>
+      <a href="#calibration">Calibration</a>
+      <a href="#performance">GPU</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#editions">Download</a>
+      <a class="btn btn-sm" href="#contact">Contact</a>
+    </nav>
+    <button class="theme" id="theme" aria-label="Switch light or dark theme">◐</button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <canvas id="sim" aria-label="Live 2D simulation: a saturated debris column released behind a gate runs down a slope into a box"></canvas>
+  <div class="hero-shade"></div>
+  <div class="wrap hero-in">
+    <p class="eyebrow">DEM + SPH · one CUDA GPU · agentic</p>
+    <h1>Granum<span class="fl">FL</span></h1>
+    <p class="lead">Grains and water, coupled on one GPU. GranumFL adds an SPH water phase to the Granum discrete element program, lays out debris flows on real terrain from a GeoTIFF, and lets an AI agent set up and read a site study through 20 MCP tools.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#editions">Download Education edition</a>
+      <a class="btn btn-ghost" href="#calibration">See the calibration</a>
+    </div>
+  </div>
+  <div class="sim-hud" aria-live="off">
+    <div><span class="k">t</span> <b id="hud-t">0.0 s</b></div>
+    <div><span class="k">stage</span> <b id="hud-stage">gate closed</b></div>
+    <div><span class="k">grain front</span> <b id="hud-g">–</b></div>
+    <div><span class="k">water front</span> <b id="hud-w">–</b></div>
+    <div class="hud-btns"><button id="replay">Replay</button><button id="tog-w" aria-pressed="true">Water</button><button id="tog-g" aria-pressed="true">Grains</button></div>
+    <p class="hud-note">A 2D toy running in your browser (grains coloured by speed, water in blue). GranumFL itself is 3D WCSPH–DEM on the GPU.</p>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="wrap stats-in">
+    <div><b>1.9×10⁸</b><span>SPH particle updates per second on one RTX 5090</span></div>
+    <div><b>12.2 M</b><span>water particles in 32 GB</span></div>
+    <div><b>4.6 M</b><span>grains coupled with 1 M water particles</span></div>
+    <div><b>20</b><span>MCP tools for water and real sites</span></div>
+    <div><b>33 / 33</b><span>objective checks passed by agents in 4 trials</span></div>
+  </div>
+</section>
+
+<section id="features" class="sec">
+  <div class="wrap">
+    <p class="eyebrow">What it does</p>
+    <h2>Debris flows as grains and water, not one fluid</h2>
+    <p class="sub">Depth-averaged models replace boulders and water by one continuum. GranumFL keeps the grains as discrete elements and the water as SPH particles, so the boulders that dam a channel, the pore water that drains from a deposit and the erosion of a bed all come out of the physics.</p>
+    <div class="cards">
+      <article class="card">
+        <div class="ico">⇄</div>
+        <h3>Unresolved DEM–SPH coupling</h3>
+        <p>The locally averaged formulation of Robinson, Ramaioli and Luding (2014): grains smaller than the smoothing length, a porosity field, Di Felice drag and −V∇P on each grain, with the exchanged momentum balanced to round-off.</p>
+      </article>
+      <article class="card">
+        <div class="ico">▦</div>
+        <h3>Both phases on one GPU</h3>
+        <p>CUDA kernels compiled at run time with NVRTC (sm_120 included). The water reads the grains from the DEM buffers on the device, so a coupled step moves no particle data to the host. The same algorithm runs on the CPU in double precision.</p>
+      </article>
+      <article class="card">
+        <div class="ico">⛰</div>
+        <h3>Real terrain in a few clicks</h3>
+        <p>Open a GeoTIFF or ESRI grid, or download the Copernicus GLO-30 tile of a latitude and longitude, crop, resample and cut. WGS 84 and UTM read from the file.</p>
+      </article>
+      <article class="card">
+        <div class="ico">◎</div>
+        <h3>Hazard maps and place records</h3>
+        <p>Debris thickness, erosion and deposit, peak speed, flood depth by volume, runout and travel angle, and records at named places (thickness, speed, water depth, ρv²), as PNG maps or ESRI grids for GIS.</p>
+      </article>
+      <article class="card">
+        <div class="ico">✦</div>
+        <h3>An agent can drive it</h3>
+        <p>A Model Context Protocol server built into the program. The in-app agent or any MCP client sets up the site, checks the warnings, runs or exports the case and reads the results.</p>
+      </article>
+      <article class="card">
+        <div class="ico">☁</div>
+        <h3>Large cases on a GPU server</h3>
+        <p>Export a case for a CUDA server, run it with one command and load its results folder back into the app. A million grains over 150 s of flow ran in 63 min on one RTX 5090.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec alt">
+  <div class="wrap">
+    <p class="eyebrow">Architecture</p>
+    <h2>The app and the agent call the same functions</h2>
+    <p class="sub">An engineer works in the desktop app or asks the agent; both reach the site layer, which lays out the case for the coupled solver. Large cases go to a GPU server and come back as a results folder.</p>
+    <figure class="fig"><img src="img/fig_arch.png" alt="Architecture: users, interfaces (desktop app, MCP server), core (site layer, solver with SPH water, coupling and DEM grains), outputs (results, GPU server)" loading="lazy"></figure>
+  </div>
+</section>
+
+<section id="site" class="sec">
+  <div class="wrap two">
+    <div>
+      <p class="eyebrow">Real terrain</p>
+      <h2>From a GeoTIFF to a site study</h2>
+      <ol class="steps">
+        <li><b>Terrain.</b> Open an elevation model or download the GLO-30 tile, crop by bounds or by a point and a size, and cut the terrain at the cell size you choose.</li>
+        <li><b>Source &amp; path.</b> Draw the source and the catchment on the plan map, trace the steepest-descent path, lay an erodible bed and channel water along it, and name places.</li>
+        <li><b>Soil and water.</b> Start from a material preset and a Manning surface, and read the estimates and warnings, such as a water layer thinner than two particle spacings.</li>
+        <li><b>Run and read.</b> Run small cases locally or export to a GPU server, then read thickness, peak speed and flood maps, place records and the travel angle.</li>
+      </ol>
+      <p class="small">Copernicus GLO-30 is a surface model: canopy and buildings are in its heights, so a lidar terrain model gives better flow paths where one exists.</p>
+    </div>
+    <div class="shots">
+      <figure><img src="img/app_debris_map.jpg" alt="GranumFL Output: plan map of debris thickness over shaded terrain with named places and the traced flow path" loading="lazy"><figcaption>Debris thickness on the plan map, with the places and the traced path.</figcaption></figure>
+      <figure><img src="img/app_water_map.jpg" alt="GranumFL Output: plan map of peak water depth by volume" loading="lazy"><figcaption>Peak water depth, measured by volume so spray does not set it.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="agents" class="sec alt agents">
+  <div class="wrap">
+    <p class="eyebrow">Agentic</p>
+    <h2>Twenty tools, one request</h2>
+    <p class="sub">In four independent trials an LLM agent, given only the engineer's request and the MCP tools, built or edited the 2026 Patong (Phuket) debris-flow site and passed all 33 objective checks, scored from the models it left. Two trials found on their own that the steepest-descent path on the surface model misses Nanai Road. Below is a replay of a real trial (T4, five tool calls).</p>
+    <div class="agent-grid">
+      <div class="term" aria-label="Replay of agent trial T4">
+        <div class="term-bar"><span></span><span></span><span></span><em>agent trial T4 · edit an existing model</em><button id="replay-agent">Replay</button></div>
+        <pre id="agent-log"></pre>
+      </div>
+      <div>
+        <h3>The tools</h3>
+        <div class="chips" id="chips"></div>
+        <h3 class="mt">Connect a client</h3>
+        <div class="tabs" role="tablist">
+          <button role="tab" aria-selected="true" data-tab="cc">Claude Code</button>
+          <button role="tab" aria-selected="false" data-tab="json">Desktop JSON</button>
+        </div>
+        <pre class="code" id="snippet"></pre>
+        <button class="copy" id="copy">Copy</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calibration" class="sec">
+  <div class="wrap">
+    <p class="eyebrow">Calibration</p>
+    <h2>Checked against Kratos, eight DEM codes, MercuryDPM and experiments</h2>
+    <p class="sub">Each phase was compared with published results of established codes on the same problems, in the geometry of the original studies. No other code was run here, so the comparisons rest on their published numbers.</p>
+    <div class="table-wrap">
+      <table class="cal">
+        <thead><tr><th>Phase and test</th><th>Reference</th><th>GranumFL</th><th>Reference result</th></tr></thead>
+        <tbody>
+          <tr><td>DEM · Chung &amp; Ooi impacts 1–2</td><td>Hertz, Kratos</td><td>force and overlap within 0.09 %</td><td>exact (analytic)</td></tr>
+          <tr><td>DEM · Chung &amp; Ooi oblique impact</td><td>Kratos</td><td>rebound angle mean 0.19° above 15°</td><td>–</td></tr>
+          <tr><td>DEM · DEM8 penetration, 25,000 grains</td><td>8 open codes (Dosta et al. 2024)</td><td>rebound −0.044 m in 1.1 min (RTX 5090)</td><td>−0.048 to −0.024 m; 1.2–122 min</td></tr>
+          <tr class="hl"><td>Coupled · sedimenting porous block, ε = 0.8, h/d = 2 / 5 / 6</td><td>MercuryDPM (Robinson et al. 2014)</td><td>−2.7 / +9.3 / +14.4 %</td><td>+5 / +15 / +22 %</td></tr>
+          <tr><td>Coupled · porous block, ε = 0.6–0.9</td><td>Robinson et al., Eq. (36)</td><td>−2.7 to +5.0 %</td><td>within 5 %</td></tr>
+          <tr><td>SPH · dam break, three resolutions</td><td>Martin &amp; Moyce (1952)</td><td>3.0–3.1 % RMS front error</td><td>–</td></tr>
+          <tr><td>SPH · hydrostatic tank</td><td>ρ₀ g (H − z)</td><td>0.68 % (GPU), 1.05 % (CPU)</td><td>–</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figure class="fig"><img src="img/fig_robinson.png" alt="Comparison with the MercuryDPM SPH-DEM of Robinson et al. 2014: single grain error, porous block error against h/d, block velocity against porosity" loading="lazy"><figcaption>Comparison with the reference implementation of the coupling (MercuryDPM SPH–DEM, Robinson et al. 2014), in their geometry.</figcaption></figure>
+    <div class="honest">
+      <h3>Where it falls short</h3>
+      <ul>
+        <li>A single settling grain is accurate only for 2.5 ≤ h/d ≤ 4: its own volume lowers the porosity it sees at small h/d, and a truncated kernel weakens its buoyancy at large h/d (+8.9 % at h/d = 6, on two GPUs).</li>
+        <li>A dense fixed bed gives 1.5 to 3.3 times Ergun's pressure drop at h/d = 2, several times the code's own Di Felice drag, so quick conditions and liquefied beds are not yet quantitative.</li>
+        <li>Field cases need the coarse-grained friction, rolling resistance and cohesion calibrated against an observed runout.</li>
+      </ul>
+    </div>
+    <div class="figs3">
+      <figure><img src="img/fig_dambreak.png" alt="Dam break surge front against Martin and Moyce" loading="lazy"><figcaption>Dam break against Martin &amp; Moyce.</figcaption></figure>
+      <figure><img src="img/fig_settling.png" alt="Settling grain against Di Felice terminal velocity" loading="lazy"><figcaption>Settling grain against Di Felice.</figcaption></figure>
+      <figure><img src="img/fig_penetration.png" alt="DEM8 penetration against eight open-source codes" loading="lazy"><figcaption>DEM8 penetration against eight codes.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="performance" class="sec alt">
+  <div class="wrap two">
+    <div>
+      <p class="eyebrow">GPU performance</p>
+      <h2>Production-class speed on one card</h2>
+      <p>The water phase sustains 1.6 to 1.9×10⁸ particle updates per second from 0.2 to 12.2 million particles on an RTX 5090, 55 to 66 times 30 CPU threads of an EPYC 7502. The coupled phase advances 3.5 to 4.8×10⁷ grain steps per second up to 4.6 million grains.</p>
+      <div class="bars" id="bars" aria-label="Time per step on GPU and CPU"></div>
+      <p class="small">For scale only: the DualSPHysics run of Crespo et al. (2015) on a GTX Titan corresponds to at least 2.9×10⁷ particle updates per second; that was older hardware and a mature, optimised code.</p>
+    </div>
+    <figure class="fig"><img src="img/fig_perf_thr.png" alt="Throughput in particle updates per second against particle count, GPU and CPU" loading="lazy"></figure>
+  </div>
+</section>
+
+<section id="gallery" class="sec">
+  <div class="wrap">
+    <p class="eyebrow">Gallery</p>
+    <h2>From a flume to a hillside</h2>
+    <div class="gallery">
+      <figure class="wide"><img src="img/render_flume_patong.jpg" alt="Renders: a saturated debris flow on a 25 degree flume at four times, and the Patong scenario at 30 s" loading="lazy"><figcaption>(a) A saturated debris flow on a 25° flume (83,072 grains, 6,400 water particles) at 0.05, 0.3, 0.6 and 1.2 s, from the app's 3D view. (b) The Patong scenario at 30 s (1,317,144 grains), for illustration.</figcaption></figure>
+      <figure><img src="img/app_agent_result.jpg" alt="The app showing a coarse trial run made by the agent: peak grain speed map" loading="lazy"><figcaption>A coarse trial run made by the agent, opened in the app.</figcaption></figure>
+      <figure><img src="img/fig_chung_ooi.png" alt="Chung and Ooi impact benchmarks against Hertz and Kratos" loading="lazy"><figcaption>DEM phase on the Chung &amp; Ooi impact benchmarks.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="editions" class="sec">
+  <div class="wrap">
+    <p class="eyebrow">Download</p>
+    <h2>Editions</h2>
+    <p class="sub">The same coupled solver in both editions. The Education edition is free for teaching and non-commercial academic research and limits the size of a model, so it runs the bundled templates and small site studies on your own computer.</p>
+    <div class="editions">
+      <article class="ed">
+        <p class="tag">For students and teachers</p>
+        <h3>Education</h3>
+        <p class="price">Free</p>
+        <ul class="ticks">
+          <li>Desktop app with Granum's laboratory tests and staged soil models</li>
+          <li>Water + grains mode: dam break, hydrostatic tank, settling, quick condition and a 25° debris-flow flume</li>
+          <li>Real terrain from a GeoTIFF or the Copernicus GLO-30 tile, with source, path, bed and places</li>
+          <li>Result maps, records at places and runout on the plan</li>
+          <li>AI chat assistant and built-in MCP server</li>
+        </ul>
+        <div class="limits">
+          <b>Education limits</b>
+          <span>Up to 50,000 grains and 50,000 water particles per water + grains case</span>
+          <span>Up to 50,000 particles per discrete element model</span>
+          <span>Terrain up to 1 km² in plan</span>
+          <span>Calculates on your own computer: no GPU-server export, no GIS (.asc) map export</span>
+          <span>Reports, maps and pictures carry an Education watermark</span>
+        </div>
+        <p class="fine">For teaching and non-commercial academic research. Need larger sites for your research? Ask for an <a href="#contact" data-topic="Academic Research licence">Academic Research licence</a>.</p>
+        <div class="dl">
+          <button class="btn btn-primary" data-os="macos">macOS</button>
+          <button class="btn btn-primary" data-os="windows">Windows</button>
+        </div>
+      </article>
+      <article class="ed pro">
+        <p class="tag">For engineering practice</p>
+        <h3>Professional</h3>
+        <p class="price">On request</p>
+        <ul class="ticks">
+          <li>Licence for commercial and consulting projects</li>
+          <li>Million-grain site studies on CUDA GPUs</li>
+          <li>Case export for cloud GPU servers and GIS result grids</li>
+          <li>Dynamic granular flow in the DEM: silos, drums, impact and tamping</li>
+          <li>Help with calibration against observed runout</li>
+          <li>Technical support and training</li>
+        </ul>
+        <p class="fine">Tell us about your project and we will reply with a licence offer.</p>
+        <div class="dl"><a class="btn btn-ghost" href="#contact" data-topic="Professional licence">Contact us</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="paper" class="sec alt">
+  <div class="wrap">
+    <p class="eyebrow">Paper</p>
+    <h2>GranumFL: an agentic, GPU-accelerated coupled DEM–SPH program for debris flows on real terrain</h2>
+    <p class="sub">Verification, calibration, GPU performance and agent trials. Manuscript in preparation; the benchmark scripts, their outputs and the agent trial logs are available from the authors on request.</p>
+  </div>
+</section>
+
+<section id="contact" class="sec">
+  <div class="wrap two">
+    <div>
+      <p class="eyebrow">Contact</p>
+      <h2>Talk to us</h2>
+      <p>AI Research Group, Department of Civil Engineering, King Mongkut's University of Technology Thonburi (KMUTT), Bangkok.</p>
+      <p><a href="mailto:tellusfem@gmail.com">tellusfem@gmail.com</a></p>
+      <p class="small">GranumFL is built on <a href="https://granumdem.github.io">Granum</a>, our discrete element program for soil.</p>
+    </div>
+    <form class="form" id="form">
+      <label>Name <input name="name" required></label>
+      <label>Organisation <input name="org"></label>
+      <label>Message <textarea name="msg" rows="4" required placeholder="What would you like to model?"></textarea></label>
+      <button class="btn btn-primary" type="submit">Send by email</button>
+    </form>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">© 2026 AI Research Group, KMUTT · GranumFL · The hero is a 2D illustration; all numbers on this page come from the calibration and performance runs described in the paper.</div>
+</footer>
+
+<dialog id="dlg">
+  <form method="dialog" class="dlg-in">
+    <h3>GranumFL Education edition</h3>
+    <p id="dlgOs" class="small"></p>
+    <label class="check"><input type="checkbox" id="agree"> I will use GranumFL for teaching or non-commercial academic research only.</label>
+    <div class="dlg-act">
+      <button class="btn btn-ghost" value="cancel">Cancel</button>
+      <a class="btn btn-primary disabled" id="dlgGo" href="#" aria-disabled="true">Download</a>
+    </div>
+    <p class="small dlg-meta"><a href="LICENSE-EDUCATION.txt" target="_blank">Licence</a> · <a href="README-EDUCATION.txt" target="_blank">Quick start</a> · <a href="https://github.com/granumDEM/granumfl/releases/latest" target="_blank" rel="noopener">All releases and checksums</a></p>
+    <p class="small" id="dlgMissing" hidden>This build is not online yet. <a href="#contact" id="dlgAsk">Ask us for a copy.</a></p>
+  </form>
+</dialog>
+
+<script src="downloads/config.js"></script>
+<script src="sim.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

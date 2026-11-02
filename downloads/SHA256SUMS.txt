@@ -1,0 +1,2 @@
+1c2a622e02d297c80cf491ce1d194062db5a078659ad670b931ef84daf77426b  GranumFL-Education-Windows.zip
+c0cc77d4731b707266f44a0cedf54b4e21056386d95afd08da0be322fd93eace  GranumFL-Education-macOS.zip
